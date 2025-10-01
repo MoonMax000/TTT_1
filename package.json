@@ -1,0 +1,42 @@
+{
+  "name": "axa-profile",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "dev_local": "next dev -H local.tyriantrade.com --port 3443 --experimental-https",
+    "dev:https": "next dev -H local.tyriantrade.com --port 3443 --experimental-https --experimental-https-key ./certificates/localhost-key.pem --experimental-https-cert ./certificates/localhost.pem"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
+    "@svgr/webpack": "^8.1.0",
+    "@tanstack/react-query": "^5.85.0",
+    "axios": "^1.11.0",
+    "clsx": "^2.1.1",
+    "copy-to-clipboard": "^3.3.3",
+    "framer-motion": "^12.23.12",
+    "js-cookie": "^3.0.5",
+    "next": "^15.4.1",
+    "next-redux-wrapper": "^8.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.60.0",
+    "react-redux": "^9.2.0",
+    "tailwind-merge": "^3.3.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.7",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

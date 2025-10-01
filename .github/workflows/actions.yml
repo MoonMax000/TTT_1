@@ -1,0 +1,55 @@
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key and known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/jump_key
+          chmod 600 ~/.ssh/jump_key
+          cat <<EOF > ~/.ssh/config
+          Host jumphost
+            HostName 80.93.187.171
+            User jumpuser
+            IdentityFile ~/.ssh/jump_key
+
+          Host target
+            HostName 94.26.248.225
+            User root
+            ProxyJump jumphost
+            IdentityFile ~/.ssh/jump_key
+          EOF
+          chmod 600 ~/.ssh/config
+          ssh-keyscan -H 80.93.187.171 >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/jump_key jumpuser@80.93.187.171 "ssh-keyscan -H 94.26.248.225" >> ~/.ssh/known_hosts
+
+      - name: Stop app via ProxyJump
+        run: |
+          ssh -T target << 'EOF'
+            cd /opt/AXA-Turian-AI/AXA-Turian-AI-profiles
+            docker compose down || true
+          EOF
+
+      - name: Deploy files via ProxyJump
+        run: |
+          rsync -avz --delete -e "ssh" ./ target:/opt/AXA-Turian-AI/AXA-Turian-AI-profiles/
+
+      - name: Start app via ProxyJump
+        run: |
+          ssh -T target << 'EOF'
+            cd /opt/AXA-Turian-AI/AXA-Turian-AI-profiles
+            echo '${{ vars.ENV_FILE }}' > .env
+            docker compose up -d --build
+          EOF
